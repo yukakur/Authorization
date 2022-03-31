@@ -8,17 +8,18 @@ public class AuthenticationService {
     private static Set<Client> clients = new HashSet<>();
     private String sqlLogin = "login";
     private String sqlPass = "password";
+    private String connectionURL = "jdbc:mysql://some_server_address_tbd";
 
     public AuthenticationService() { // constructor updating set on initialization
         GetClientsFromMySQL();
 
     }
     public void GetClientsFromMySQL() {
-        GetSpecificClientListFromBase("SELECT * FROM person"); //update list of all sql to local set
+        GetClientsFromBase("SELECT * FROM person"); //update list of all sql to local set
 
     }
 
-    public void GetSpecificClientListFromBase(String sqlRequest) { //update set by specific sqlRequest
+    public void GetClientsFromBase(String sqlRequest) { //update set by specific sqlRequest
         Client client;
         String connectionURL = "jdbc:mysql://some_server_address_tbd";
         try (Connection conn = DriverManager.getConnection(connectionURL, "username", "password");
@@ -44,5 +45,13 @@ public class AuthenticationService {
 
     public boolean AccessGranted(Client client) { // return true if client is in local set (by login and password)
         return (findLoginAndPassword(client.getLogin(), client.getPassword()) != null);
+    }
+
+    public ClientType checkStatus(Client client) { // return type of Client (User, Admin etc...)
+        return client.getClientType();
+    }
+
+    public void ChangeCLientType(Client client, ClientType clientType) { // change type of Client
+        client.setClientType(clientType);
     }
 }
